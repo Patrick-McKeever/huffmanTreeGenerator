@@ -17,8 +17,8 @@ class node:
     def encode(self, codePrefix = ''):
         if self.left == None and self.right == None:
             return { self.data : codePrefix }
-        else:
-            return { **self.left.encode(codePrefix + '0'), **self.right.encode(codePrefix + '1') }
+
+        return { **self.left.encode(codePrefix + '0'), **self.right.encode(codePrefix + '1') }
 
 #turn dictionary of {char : frequency} pairs into list of nodes;
 def nodeFactory(frequencies):
@@ -43,9 +43,14 @@ def printTree(root, space = 0) :
 #generate huffman tee of provided string;
 def huffmanTreeGenerate(string):
     chars = Counter(string)
+            
     charFrequencies = { k:v for (k,v) in sorted(chars.items(), key = lambda x: x[1]) }
 
     nodes = nodeFactory(charFrequencies)
+    
+    if len(nodes) == 1:
+        return nodes[0]
+    
     initialPair = node('', None, nodes[0], nodes[1])
     
     pq = nodes[2:] + [initialPair] #priority queue;
@@ -71,6 +76,9 @@ def huffmanEncode(string, mappings):
     return returnStr
 
 sampleStr = input('Enter phrase:\t')
+while sampleStr == '':
+    sampleStr = input('Enter a non-empty phrase:\t')
+    
 huffmanTree = huffmanTreeGenerate(sampleStr)
 
 print('--------------------------HUFFMAN TREE--------------------------')
@@ -90,4 +98,5 @@ fixedWidthStrLength = fixedWidthCodeLength * len(sampleStr)
 
 print('The huffman-encoded version of "%s" is: "%s"' % (sampleStr, huffmanEncodedStr))
 print('With %d fixed-width characters each consuming %d bits, representation of this string would have required %d bits. With huffman-encoding, it requires only %d.' 
-          % (len(sampleStr), fixedWidthCodeLength, fixedWidthStrLength, len(huffmanEncodedStr)))
+      % (len(sampleStr), fixedWidthCodeLength, fixedWidthStrLength, len(huffmanEncodedStr))
+ )
